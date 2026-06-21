@@ -1,11 +1,19 @@
 body {
-  background: #111;
-  color: white;
-  text-align: center;
-  font-family: Arial, sans-serif;
+    margin: 0;
+    background: #111;
+    color: white;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    margin: 10px 0;
 }
 
 canvas {
-  background: skyblue;
-  border: 2px solid white;
+    display: block;
+    width: 100vw;
+    height: 85vh;
+    border: 2px solid white;
+    margin: auto;
 }
