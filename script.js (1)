@@ -1,0 +1,104 @@
+const gravity = 0.5;
+const jump = -8;
+
+let pipes = [];
+let score = 0;
+let gameOver = false;
+
+// Fly
+function fly() {
+  rocket.velocity = jump;
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.code === "Space") fly();
+});
+
+canvas.addEventListener("click", fly);
+
+// Create Pipes
+function createPipe() {
+  let gap = 150;
+  let topPipeHeight = Math.random() * 200 + 50;
+
+  pipes.push({
+    x: canvas.width,
+    width: 60,
+    topHeight: topPipeHeight,
+    bottomY: topPipeHeight + gap
+  });
+}
+
+setInterval(() => {
+  if (!gameOver) createPipe();
+}, 2000);
+
+// Game Update
+function update() {
+  rocket.velocity += gravity;
+  rocket.y += rocket.velocity;
+
+  pipes.forEach(pipe => {
+    pipe.x -= 3;
+
+    // Collision
+    if (
+      rocket.x + rocket.width > pipe.x &&
+      rocket.x < pipe.x + pipe.width &&
+      (
+        rocket.y < pipe.topHeight ||
+        rocket.y + rocket.height > pipe.bottomY
+      )
+    ) {
+      gameOver = true;
+    }
+
+    // Score
+    if (pipe.x + pipe.width === rocket.x) {
+      score++;
+    }
+  });
+
+  if (rocket.y < 0 || rocket.y > canvas.height) {
+    gameOver = true;
+  }
+}
+
+// Draw
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Rocket
+  ctx.font = "40px Arial";
+  ctx.fillText("🚀", rocket.x, rocket.y);
+
+  // Pipes
+  ctx.fillStyle = "green";
+
+  pipes.forEach(pipe => {
+    ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
+
+    ctx.fillRect(
+      pipe.x,
+      pipe.bottomY,
+      pipe.width,
+      canvas.height - pipe.bottomY
+    );
+  });
+
+  // Score
+  ctx.fillStyle = "white";
+  ctx.font = "25px Arial";
+  ctx.fillText("Score: " + score, 10, 30);
+
+  if (gameOver) {
+    ctx.font = "40px Arial";
+    ctx.fillText("GAME OVER", 70, 300);
+    return;
+  }
+
+  update();
+  requestAnimationFrame(draw);
+}
+
+draw();
